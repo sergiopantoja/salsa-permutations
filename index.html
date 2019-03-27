@@ -3,28 +3,222 @@
 <head>
   <title>Salsa Permutations</title>
   <script src="https://unpkg.com/vue"></script>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+      font-family: sans-serif;
+      background: #ffc600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .heading {
+      margin: 0;
+      font-size: 72px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+    }
+
+    .heading span {
+      display: inline-block;
+      margin: 0 0.2rem;
+      transition: transform 0.2s;
+    }
+
+    .heading,
+    .subheading {
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .heading span:nth-of-type(n):hover {
+      transform: translateY(-20px) scale(2) rotate(10deg);
+    }
+
+    .heading span:nth-of-type(2n):hover {
+      transform: translateY(-20px) scale(2) rotate(-10deg);
+    }
+
+    .subheading {
+      margin: 0;
+      font-size: 24px;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    .subheading span {
+      margin: 0 0.2rem;
+      align-self: center;
+    }
+
+    .subheading.reorder span:nth-child(1) {
+      order: 2;
+    }
+
+    .subheading.reorder span:nth-child(2) {
+      order: 4;
+    }
+
+    .subheading.reorder span:nth-child(3) {
+      order: 1;
+    }
+
+    .subheading.reorder span:nth-child(4) {
+      order: 3;
+    }
+
+    .subheading.reorder span:nth-child(5) {
+      order: 6;
+    }
+
+    .subheading.reorder span:nth-child(6) {
+      order: 5;
+    }
+
+    .subheading.reorder span:nth-child(7) {
+      order: 9;
+    }
+
+    .subheading.reorder span:nth-child(8) {
+      order: 11;
+    }
+
+    .subheading.reorder span:nth-child(9) {
+      order: 7;
+    }
+
+    .subheading.reorder span:nth-child(10) {
+      order: 8;
+    }
+
+    .subheading.reorder span:nth-child(11) {
+      order: 12;
+    }
+
+    .subheading.reorder span:nth-child(12) {
+      order: 10;
+    }
+
+    .subheading.reorder span:nth-child(5) {
+      order: 6;
+    }
+
+    .form {
+      font-size: 1.5rem;
+      font-weight: 300;
+    }
+
+    .form .madlibs {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+    }
+
+    .form .madlibs input {
+      border-top: 0;
+      border-right: 0;
+      border-left: 0;
+      background: transparent;
+      border-bottom: 2px solid rgba(0,0,0,0.2);
+      color: white;
+      text-shadow: 2px 2px rgba(0,0,0,0.2);
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      padding: 0;
+      margin: 0 1rem;
+      width: 5rem;
+    }
+
+    .form .madlibs input:focus {
+      outline: 0;
+      border-color: rgba(0,0,0,0.2);
+    }
+
+    .btn {
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+      background: rgba(0,0,0,0.2);
+      cursor: pointer;
+      display: inline-block;
+      margin: 15px 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      outline: none;
+      position: relative;
+      transition: all 0.3s;
+      border-radius: 7px;
+      box-shadow: 0 5px rgba(0,0,0,0.4);
+      padding: 25px 60px;
+    }
+
+    .results {
+      display: block;
+      margin: 2rem 0;
+      padding: 0;
+      background: rgba(0,0,0,0.2);
+      border-radius: 7px;
+      box-shadow: 0 5px rgba(0,0,0,0.4);
+    }
+
+    .results-item:first-child {
+      border-top-left-radius: 7px;
+      border-top-right-radius: 7px;
+    }
+
+    .results-item:last-child {
+      margin-bottom: 0;
+      border-bottom-right-radius: 7px;
+      border-bottom-left-radius: 7px;
+    }
+
+    .results-item {
+      display: block;
+      border: 1px solid rgba(0,0,0,0.05);
+      padding: 1.25rem 1.25rem;
+      margin-bottom: -1px;
+      font-size: 1.5rem;
+    }
+
+    .results-count {
+      color: rgba(255,255,255,0.75);
+    }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <section class="jumbotron text-center bg-white mt-5 mb-0">
-      <h1 class="jumbotron-heading">Salsa Combos</h1>
-      <div class="form-inline text-center justify-content-center">
-        <div class="form-text lead text-muted mr-2">The song is</div>
-        <input class="form-control" style="width: 5rem; text-align: center" type="number" v-model="beatsPerMinute" />
-        <div class="form-text lead text-muted mx-2">BPM and I want</div>
-        <input class="form-control" style="width: 5rem; text-align: center" type="number" v-model="moveCount" />
-        <div class="form-text lead text-muted mx-2">move combinations</div>
-        <button class="btn btn-primary my-2" v-on:click="start">Bailar!</button>
-      </div>
-    </section>
+  <div id="app" class="container">
+    <div class="header">
+      <h1 class="heading" data-behavior="span-split">Salsa</h1>
+      <h2 class="subheading" data-behavior="span-split">Permutations</h2>
+    </div>
 
-    <div class="row">
-      <div class="col-4 mx-auto">
-        <ul class="list-group text-center">
-          <li class="list-group-item" v-for="move in moves">{{ move.name }} <sup style="color: #aaa">{{ move.count }}</sup></li>
-        </ul>
+    <ul class="results">
+       <li class="results-item" v-for="move in moves">{{ move.name }} <sup class="results-count">{{ move.count }}</sup></li>
+    </ul>
+
+    <div class="form">
+      <div class="madlibs">
+        <div>The song is</div>
+        <input type="tel" style="width: 4rem" v-model="beatsPerMinute" />
+        <div>BPM and I want</div>
+        <input type="tel" style="width: 2rem" v-model="moveCount" />
+        <div>moves at a time</div>
       </div>
+      <button class="btn" v-on:click="start">Bailar!</button>
     </div>
   </div>
 
@@ -72,7 +266,7 @@
       el: '#app',
       data: {
         beatsPerMinute: 100,
-        moveCount: 5,
+        moveCount: 3,
         hands: '',
         moves: []
       },
@@ -101,6 +295,68 @@
         }
       }
     })
+  </script>
+
+  <script>
+    {
+      function sparanWrap(word) {
+        return [...word].map(letter => `<span>${letter}</span>`).join('')
+      }
+
+      const splits = document.querySelectorAll('[data-behavior="span-split"]');
+      for (split of splits) {
+        split.innerHTML = sparanWrap(split.textContent);
+      }
+    }
+  </script>
+
+  <script>
+    var group = document.querySelector('.subheading');
+    var nodes = document.querySelectorAll('.subheading span');
+    var total = nodes.length;
+    var ease  = Power1.easeInOut;
+    var boxes = [];
+
+    for (var i = 0; i < total; i++) {
+
+      var node = nodes[i];
+
+      // Initialize transforms on node
+      TweenLite.set(node, { x: 0 });
+
+      boxes[i] = {
+        transform: node._gsTransform,
+        x: node.offsetLeft,
+        y: node.offsetTop,
+        node
+      };
+    }
+
+    group.addEventListener("mouseenter", layout);
+    group.addEventListener("mouseleave", layout);
+
+    function layout() {
+      group.classList.toggle("reorder");
+
+      for (var i = 0; i < total; i++) {
+        var box = boxes[i];
+        var lastX = box.x;
+        var lastY = box.y;
+
+        box.x = box.node.offsetLeft;
+        box.y = box.node.offsetTop;
+
+        // Continue if box hasn't moved
+        if (lastX === box.x && lastY === box.y) continue;
+
+        // Reversed delta values taking into account current transforms
+        var x = box.transform.x + lastX - box.x;
+        var y = box.transform.y + lastY - box.y;
+
+        // Tween to 0 to remove the transforms
+        TweenLite.fromTo(box.node, 0.5, { x, y }, { x: 0, y: 0, ease });
+      }
+    }
   </script>
 </body>
 </html>
