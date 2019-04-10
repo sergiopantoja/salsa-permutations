@@ -37,6 +37,9 @@ const sample = arr => arr[Math.floor(Math.random() * arr.length)]
 const SECONDS_IN_MINUTE = 60;
 const MS_IN_MINUTE = SECONDS_IN_MINUTE * 1000;
 
+const metronomeEnabled = false;
+const sound = new Howl({src: ['click.wav']});
+
 const app = new Vue({
   el: '#app',
   data: {
@@ -65,6 +68,12 @@ const app = new Vue({
       const delayPerCount = SECONDS_IN_MINUTE / parseInt(this.beatsPerMinute) * 1000;
       const counts = this.moves.reduce((total, move) => total += move.count, 0)
       const delay = delayPerCount * counts * 2;
+
+      if (metronomeEnabled) {
+        for (let i = 0; i < counts * 2; i++) {
+          setTimeout(() => sound.play(), i * delayPerCount);
+        }
+      }
 
       setTimeout(this.start, delay);
     }
