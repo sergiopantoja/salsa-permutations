@@ -3,8 +3,6 @@
 <head>
   <title>Salsa Permutations</title>
   <link rel="stylesheet" href="./style.css" />
-  <script src="https://unpkg.com/vue"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
 </head>
 <body>
   <div id="app" class="container">
@@ -29,141 +27,10 @@
     </div>
   </div>
 
-  <script>
-    const moveOptions = {
-      hands: [
-        {name: 'Closed Hands', count: 1},
-        {name: 'Two Hands', count: 1},
-        {name: 'One Hand', count: 1},
-        {name: 'No Hands', count: 1},
-        {name: 'Handshake Over', count: 1},
-        {name: 'Handshake Under', count: 1}
-      ],
-      spins: [
-        {name: 'His Spin', count: 2},
-        {name: 'Her Spin', count: 2},
-        {name: 'Two Hand Spin', count: 2},
-        {name: 'Hammerlock', count: 2}
-      ],
-      combs: [
-        {name: 'His Comb', count: 1},
-        {name: 'Double His Comb', count: 1},
-        {name: 'Her Comb', count: 1}
-      ],
-      turns: [
-        {name: 'Cross-Body Lead', count: 4},
-        {name: 'Cross-Body Lead w/ CW Spin', count: 4},
-        {name: 'Cross-Body Lead w/ CCW Spin', count: 4},
-        {name: 'Cross-Body Fake', count: 4},
-        {name: 'Right Turn', count: 2},
-        {name: 'Right Turn w/ CW Spin', count: 2}
-      ],
-      other: [
-        {name: 'Stop & Go', count: 4},
-        {name: 'Cumbia', count: 4}
-      ]
-    }
-
-    const sample = arr => arr[Math.floor(Math.random() * arr.length)]
-
-    const SECONDS_IN_MINUTE = 60;
-    const MS_IN_MINUTE = SECONDS_IN_MINUTE * 1000;
-
-    const app = new Vue({
-      el: '#app',
-      data: {
-        beatsPerMinute: 100,
-        moveCount: 3,
-        hands: '',
-        moves: []
-      },
-      methods: {
-        start: function() {
-          const possibilities = moveOptions.spins.concat(moveOptions.combs).concat(moveOptions.turns).concat(moveOptions.other);
-
-          let lastMove = {};
-          this.moves = Array.from(Array(parseInt(this.moveCount)), () => {
-            do {
-              thisMove = sample(possibilities)
-            } while (thisMove.name === lastMove.name);
-
-            lastMove = thisMove
-
-            return thisMove
-          });
-
-          this.hands = sample(moveOptions.hands).name;
-
-          const delayPerCount = SECONDS_IN_MINUTE / parseInt(this.beatsPerMinute) * 1000;
-          const counts = this.moves.reduce((total, move) => total += move.count, 0)
-          const delay = delayPerCount * counts * 2;
-
-          setTimeout(this.start, delay);
-        }
-      }
-    })
-  </script>
-
-  <script>
-    {
-      function sparanWrap(word) {
-        return [...word].map(letter => `<span>${letter}</span>`).join('')
-      }
-
-      const splits = document.querySelectorAll('[data-behavior="span-split"]');
-      for (split of splits) {
-        split.innerHTML = sparanWrap(split.textContent);
-      }
-    }
-  </script>
-
-  <script>
-    var group = document.querySelector('.subheading');
-    var nodes = document.querySelectorAll('.subheading span');
-    var total = nodes.length;
-    var ease  = Power1.easeInOut;
-    var boxes = [];
-
-    for (var i = 0; i < total; i++) {
-
-      var node = nodes[i];
-
-      // Initialize transforms on node
-      TweenLite.set(node, { x: 0 });
-
-      boxes[i] = {
-        transform: node._gsTransform,
-        x: node.offsetLeft,
-        y: node.offsetTop,
-        node
-      };
-    }
-
-    group.addEventListener("mouseenter", layout);
-    group.addEventListener("mouseleave", layout);
-
-    function layout() {
-      group.classList.toggle("reorder");
-
-      for (var i = 0; i < total; i++) {
-        var box = boxes[i];
-        var lastX = box.x;
-        var lastY = box.y;
-
-        box.x = box.node.offsetLeft;
-        box.y = box.node.offsetTop;
-
-        // Continue if box hasn't moved
-        if (lastX === box.x && lastY === box.y) continue;
-
-        // Reversed delta values taking into account current transforms
-        var x = box.transform.x + lastX - box.x;
-        var y = box.transform.y + lastY - box.y;
-
-        // Tween to 0 to remove the transforms
-        TweenLite.fromTo(box.node, 0.5, { x, y }, { x: 0, y: 0, ease });
-      }
-    }
-  </script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+  <script src="./app.js"></script>
+  <script src="./sparan-wrap.js"></script>
+  <script src="./permutation.js"></script>
 </body>
 </html>
